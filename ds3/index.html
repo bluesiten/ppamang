@@ -411,7 +411,7 @@ footer{margin:44px 0 72px;font-size:11.5px;line-height:1.6}
 @media (hover:hover){.xpill:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.05),0 14px 28px -12px rgba(0,0,0,.2)}.xpill:hover .xi{transform:translateY(2px)}}
 .xpill:active{transform:scale(.97)}
 @media (max-width:620px){.wrap{padding:0 16px}.card{padding:16px 14px 0}.seg3 button{gap:3px;font-size:11.5px}.seg3 button svg{width:11px;height:11px}.org{font-size:15px}.figs b{font-size:14px}}
-body.ro .seg3,body.ro .sheet .memo,body.ro .sheet .row,body.ro footer,body.ro .card.tossed .cfoot{display:none!important}
+body.ro #detail .memo,body.ro footer{display:none!important}
 body.ro .dbtn{margin-top:2px}
 
 /* ===== v5 premium ===== */
@@ -461,6 +461,14 @@ header{background:color-mix(in srgb,var(--bg) 55%,transparent)}
 .sheet{background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(30px) saturate(1.8);-webkit-backdrop-filter:blur(30px) saturate(1.8)}
 .link.primary{background:linear-gradient(180deg,#2a8bff,#0071e3);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 10px 22px -12px rgba(0,113,227,.9)}
 @media (prefers-reduced-motion: reduce){.aurora i,.card.pinned::before{animation:none!important}}
+.sheet.ask{text-align:center;justify-items:center;width:min(380px,100%)}
+.sheet.ask p{max-width:280px;line-height:1.55}
+.sheet.ask .row{width:100%;justify-content:center}
+.sheet.ask .pbtn{min-width:140px;padding:11px 20px}
+.askic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:#fff;background:linear-gradient(180deg,#2a8bff,#0071e3);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 24px -10px rgba(0,113,227,.9);animation:askPop .5s var(--spring)}
+.askic svg{width:24px;height:24px}
+@keyframes askPop{from{transform:scale(.6) rotate(-8deg);opacity:0}}
+.card.tossed{margin-top:0}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -497,6 +505,12 @@ header{background:color-mix(in srgb,var(--bg) 55%,transparent)}
 
 <div class="scrim" id="scrim"></div>
 <section class="sheet" id="detail" role="dialog" aria-modal="true" aria-label="공고 상세"></section>
+<section class="sheet ask" id="ask" role="dialog" aria-modal="true" aria-labelledby="askH">
+  <div class="askic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></div>
+  <h2 id="askH">관리자에게 문의해 주세요</h2>
+  <p>이 페이지는 보기 전용이에요. 주목·일반·버리기 분류는 관리자만 바꿀 수 있어요.</p>
+  <div class="row"><button class="pbtn dark" data-close>확인</button></div>
+</section>
 <section class="sheet" id="toss" role="dialog" aria-modal="true" aria-labelledby="tossH">
   <h2 id="tossH">이 공고를 버릴까요?</h2>
   <p id="tossSub"></p>
@@ -652,7 +666,7 @@ function render(){
   if(!full.length){ $("#list").innerHTML=`<div class="empty"><b>${state.pubOnly||state.f.size?"조건에 맞는 공고가 없어요":"아직 수집된 공고가 없어요"}</b>${state.pubOnly||state.f.size?"거르기 조건을 풀어 보세요.":"다음 공고는 월요일 오전에 올라와요."}</div>`; }
   else if(state.view==="table"){
     $("#list").innerHTML=`<div class="table"><div class="thead"><span></span><span>발주처</span><span>사업명</span><span style="text-align:right">예산</span><span style="text-align:right">마감</span><span style="text-align:right">D-day</span><span></span></div>${shown.map((c,i)=>(c.status==="discarded"?tossRowHTML(c,i):rowHTML(c,i))).join("")}</div>${moreHTML}`;
-  } else $("#list").innerHTML=`<div class="grid">${shown.map((c,i)=>{ const k=c.status||"new", pk=i?(shown[i-1].status||"new"):null; return (k!==pk&&k==="discarded"?`<h3 class="sec ${k}">${{pinned:"주목",kept:"일반",new:"새 공고",discarded:"버린 공고"}[k]}<span>${{pinned:"꼭 참여하고 싶은 비딩",kept:"괜찮은 비딩",new:"아직 분류하지 않은 공고",discarded:"다음 수집 때 비슷한 공고를 거르는 데 쓰여요"}[k]}</span></h3>`:"")+(k==="discarded"?tossCardHTML(c,i):cardHTML(c,i)); }).join("")}</div>${moreHTML}`;
+  } else $("#list").innerHTML=`<div class="grid">${shown.map((c,i)=>{ const k=c.status||"new", pk=i?(shown[i-1].status||"new"):null; return (false?`<h3 class="sec ${k}">${{pinned:"주목",kept:"일반",new:"새 공고",discarded:"버린 공고"}[k]}<span>${{pinned:"꼭 참여하고 싶은 비딩",kept:"괜찮은 비딩",new:"아직 분류하지 않은 공고",discarded:"다음 수집 때 비슷한 공고를 거르는 데 쓰여요"}[k]}</span></h3>`:"")+(k==="discarded"?tossCardHTML(c,i):cardHTML(c,i)); }).join("")}</div>${moreHTML}`;
   // FLIP
   if(!matchMedia("(prefers-reduced-motion: reduce)").matches){
     document.querySelectorAll("[id^=card-]").forEach(el=>{ const b=before[el.id]; if(!b) return; const a=el.getBoundingClientRect(); const dx=b.left-a.left, dy=b.top-a.top; if(!dx&&!dy) return;
@@ -698,6 +712,7 @@ document.addEventListener("click",async e=>{
   const b=e.target.closest("[data-act]"); if(!b) return;
   const id=b.dataset.id, a=b.dataset.act, c=state.cards.find(x=>x._id===id); if(!c) return;
   if(a==="detail"){ state.detail=id; $("#detail").innerHTML=detailHTML(c); openSheet($("#detail")); return; }
+  if(state.readonly && ["pin","keep","unset","toss"].includes(a)){ closeSheets(); openSheet($("#ask")); return; }
   if(a==="toss"){ state.tossFor=id; state.pick.clear(); $("#tossNote").value=""; $("#tossSub").textContent=`${knownOrg(c)?c.org+" · ":""}${c.title}`; $("#rchips").innerHTML=REASONS.map(r=>`<button class="rchip" data-reason="${r}" aria-pressed="false">${r}</button>`).join(""); openSheet($("#toss")); return; }
   const sg=b.closest(".seg3"); if(sg&&a!=="toss"){ sg.dataset.i=a==="pin"?2:a==="keep"?1:-1; await new Promise(r=>setTimeout(r,200)); }
   if(a==="pin"){ closeSheets(); return setStatus(id,{status:"pinned"},"주목으로 분류했어요.","leave"); }
