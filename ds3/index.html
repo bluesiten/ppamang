@@ -742,7 +742,7 @@ $("#list").innerHTML=`<div class="grid">${Array.from({length:6},()=>'<div class=
   const db = window.claude && await window.claude.use("db");
   if(!db){ // 로그인하지 않은 방문자: 매주 갱신되는 공개용 사본을 보기 전용으로
     try{ const r=await fetch("snapshot.json",{cache:"no-store"}); if(!r.ok) throw 0; const j=await r.json();
-      state.readonly=true; document.body.classList.add("ro"); state.cards=(j.cards||[]).map(c=>({...c,status:c.status==="discarded"?"discarded":"new"})); state.snapAt=j.updatedAt; state.ready=true; render();
+      state.readonly=true; document.body.classList.add("ro"); state.cards=(j.cards||[]).map(c=>({...c,status:["pinned","kept","discarded"].includes(c.status)?c.status:"new"})); state.snapAt=j.updatedAt; state.ready=true; render();
     }catch(e){ $("#list").innerHTML=`<div class="empty"><b>공고를 불러올 수 없어요</b>잠시 뒤 다시 열어 주세요.</div>`; }
     return; }
   state.db=db;
