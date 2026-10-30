@@ -469,6 +469,31 @@ header{background:color-mix(in srgb,var(--bg) 55%,transparent)}
 .askic svg{width:24px;height:24px}
 @keyframes askPop{from{transform:scale(.6) rotate(-8deg);opacity:0}}
 .card.tossed{margin-top:0}
+
+/* ===== dark mode ambience ===== */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --dkb:1}
+  :root:not([data-theme="light"]) body{background:radial-gradient(120% 70% at 50% -10%,#0b1430 0%,#000 60%)}
+  :root:not([data-theme="light"]) .aurora{opacity:1;filter:blur(70px) saturate(1.4)}
+  :root:not([data-theme="light"]) .aurora i:nth-child(1){background:radial-gradient(circle,rgba(10,132,255,.55),transparent 62%)}
+  :root:not([data-theme="light"]) .aurora i:nth-child(2){background:radial-gradient(circle,rgba(191,90,242,.42),transparent 62%)}
+  :root:not([data-theme="light"]) .aurora i:nth-child(3){background:radial-gradient(circle,rgba(255,159,10,.26),transparent 62%)}
+  :root:not([data-theme="light"]) .grain{opacity:.8;background-image:radial-gradient(rgba(255,255,255,.09) 1px,transparent 1px)}
+  :root:not([data-theme="light"]) header{background:rgba(0,0,0,.45)}
+  :root:not([data-theme="light"]) .card{background:rgba(28,28,30,.62);box-shadow:0 1px 1px rgba(0,0,0,.3),0 18px 40px -20px rgba(0,0,0,.8)}
+  :root:not([data-theme="light"]) .card::before{background:linear-gradient(150deg,rgba(255,255,255,.32),rgba(255,255,255,.06) 40%,rgba(10,132,255,0) 60%,rgba(10,132,255,.45))}
+  :root:not([data-theme="light"]) .card:hover::before{background:linear-gradient(150deg,rgba(255,255,255,.5),rgba(10,132,255,.6) 45%,rgba(191,90,242,.6))}
+  :root:not([data-theme="light"]) .card.pinned{background:linear-gradient(180deg,rgba(255,204,77,.12),rgba(28,28,30,.62) 45%);box-shadow:0 14px 40px -16px rgba(255,204,77,.35)}
+  :root:not([data-theme="light"]) .card.tossed{background:rgba(28,28,30,.35)}
+  :root:not([data-theme="light"]) .card.pinned::before,:root:not([data-theme="light"]) .card.pinned:hover::before{background:conic-gradient(from var(--a),#ffcc4d,rgba(255,214,120,.12) 25%,rgba(255,204,77,.75) 50%,rgba(255,214,120,.12) 75%,#ffcc4d)}
+  :root:not([data-theme="light"]) .card.tilt::after{background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.12),transparent 45%);mix-blend-mode:normal}
+  :root:not([data-theme="light"]) .seg3[data-i="2"] .thumb{background:linear-gradient(180deg,#4a3a12,#2e250d);box-shadow:0 3px 10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,214,120,.25)}
+  :root:not([data-theme="light"]) .seg3[data-i="1"] .thumb{background:#3a3a3c}
+  :root:not([data-theme="light"]) .logo{background:linear-gradient(135deg,#f5f5f7,#c7c7cc);color:#000}
+  :root:not([data-theme="light"]) .chip,:root:not([data-theme="light"]) .select,:root:not([data-theme="light"]) .seg{background-color:rgba(44,44,46,.55)}
+  :root:not([data-theme="light"]) .morebtn,:root:not([data-theme="light"]) .xpill{background:rgba(28,28,30,.7);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.15),0 10px 30px -14px rgba(0,0,0,.8)}
+  :root:not([data-theme="light"]) .sheet{background:rgba(28,28,30,.85)}
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
