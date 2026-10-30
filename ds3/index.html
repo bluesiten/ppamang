@@ -494,6 +494,26 @@ header{background:color-mix(in srgb,var(--bg) 55%,transparent)}
   :root:not([data-theme="light"]) .morebtn,:root:not([data-theme="light"]) .xpill{background:rgba(28,28,30,.7);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.15),0 10px 30px -14px rgba(0,0,0,.8)}
   :root:not([data-theme="light"]) .sheet{background:rgba(28,28,30,.85)}
 }
+
+/* ===== team lockup ===== */
+.brand{gap:10px;min-width:0}
+.logo{position:relative;overflow:hidden;isolation:isolate}
+.logo::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-130%);animation:logoShine 5.5s var(--spring) 1.2s infinite}
+@keyframes logoShine{0%,72%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+.team{position:relative;display:inline-block;font-size:13.5px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;
+  clip-path:inset(-2px 100% -6px 0);animation:teamIn 1s var(--spring) .25s forwards}
+.team-t{background:linear-gradient(90deg,#0071e3 0%,#7d4cdb 35%,#c08a00 60%,#0071e3 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:teamFlow 7s linear infinite}
+.team::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1.5px;border-radius:2px;background:linear-gradient(90deg,#0071e3,#7d4cdb,#c08a00);transform:scaleX(0);transform-origin:left;animation:teamLine .9s var(--spring) .9s forwards;opacity:.55}
+@keyframes teamIn{from{clip-path:inset(-2px 100% -6px 0);filter:blur(4px)}to{clip-path:inset(-2px -2px -6px 0);filter:none}}
+@keyframes teamFlow{to{background-position:-220% 0}}
+@keyframes teamLine{to{transform:scaleX(1)}}
+.bsep{width:1px;height:14px;background:var(--line);flex:0 0 auto}
+@media (max-width:520px){.team{font-size:12.5px}.brand h1{font-size:14px}.brand{gap:8px}}
+@media (max-width:380px){.bsep,.brand h1{display:none}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .team-t{background-image:linear-gradient(90deg,#64b5ff 0%,#c79bff 35%,#ffd36b 60%,#64b5ff 100%)}
+  :root:not([data-theme="light"]) .team::after{background:linear-gradient(90deg,#64b5ff,#c79bff,#ffd36b)}
+  :root:not([data-theme="light"]) .bsep{background:rgba(255,255,255,.18)}}
+@media (prefers-reduced-motion: reduce){.team{clip-path:none!important}.team::after{transform:none!important}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -502,7 +522,7 @@ header{background:color-mix(in srgb,var(--bg) 55%,transparent)}
 <header id="hdr">
   <div class="wrap">
     <div class="hrow">
-      <div class="brand"><span class="logo">DS3</span><h1>이주의 신규 공고</h1></div>
+      <div class="brand"><span class="logo" aria-hidden="true">DS3</span><span class="team"><span class="team-t">디지털전략3팀</span></span><span class="bsep" aria-hidden="true"></span><h1>이주의 신규 공고</h1></div>
       <div class="hright"><span class="upd" id="upd">매주 월요일 업데이트</span></div>
     </div>
   </div>
