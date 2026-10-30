@@ -148,7 +148,7 @@ footer li button{border:0;background:none;color:var(--muted);text-decoration:und
 .row{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .pbtn{border:1px solid var(--line);background:transparent;border-radius:8px;padding:8px 14px;font-weight:500;font-size:13.5px}
 .pbtn.dark{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.pbtn.left{margin-right:auto}
+.pbtn.left{margin-left:auto}
 .rchips{display:flex;flex-wrap:wrap;gap:6px}
 .rchip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 11px;font-size:13px}
 .rchip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
@@ -235,12 +235,12 @@ h1{font-size:15.5px}
 .seg3 button:active{transform:scale(.95)}
 .seg3 .thumb{position:absolute;z-index:0;top:3px;bottom:3px;left:3px;width:calc((100% - 6px)/3);border-radius:7px;background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.08),0 2px 8px -2px rgba(0,0,0,.08);opacity:0;transform:translateX(calc(var(--x,1) * 100%)) scale(.9);transition:transform .38s cubic-bezier(.3,1.25,.5,1),opacity .2s,background .25s}
 .seg3[data-i="1"] .thumb{--x:1;opacity:1;transform:translateX(100%)}
-.seg3[data-i="2"] .thumb{--x:2;opacity:1;transform:translateX(200%);background:var(--gold)}
+.seg3[data-i="2"] .thumb{--x:2;opacity:1;transform:translateX(0);background:var(--gold)}
 .seg3[data-i="1"] button:nth-of-type(2){color:var(--ink);font-weight:600}
-.seg3[data-i="2"] button:nth-of-type(3){color:#fff;font-weight:600}
-.seg3 button:nth-of-type(3) svg{transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
-.seg3[data-i="2"] button:nth-of-type(3) svg{transform:rotate(-14deg) scale(1.12)}
-.seg3 button:nth-of-type(1):hover{color:var(--hot)}
+.seg3[data-i="2"] button:nth-of-type(1){color:#fff;font-weight:600}
+.seg3 button:nth-of-type(1) svg{transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
+.seg3[data-i="2"] button:nth-of-type(1) svg{transform:rotate(-14deg) scale(1.12)}
+.seg3 button:nth-of-type(3):hover{color:var(--hot)}
 /* 상세 보기 */
 .dbtn{display:flex;align-items:center;justify-content:center;gap:6px;height:38px;border:0;border-radius:10px;background:var(--ink);color:var(--bg);font-size:12.5px;font-weight:600;letter-spacing:-.01em;position:relative;overflow:hidden;transition:transform .15s,box-shadow .25s}
 .dbtn svg{width:14px;height:14px;transition:transform .3s var(--ease)}
@@ -323,8 +323,8 @@ h1{font-size:15px;font-weight:600;letter-spacing:-.02em}
 .seg3 .thumb{top:2px;bottom:2px;left:2px;width:calc((100% - 4px)/3);border-radius:9px;background:var(--card);box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04);transition:transform .45s var(--spring),opacity .25s}
 .seg3[data-i="2"] .thumb{background:var(--card)}
 .seg3[data-i="1"] button:nth-of-type(2){color:var(--ink);font-weight:600}
-.seg3[data-i="2"] button:nth-of-type(3){color:var(--gold);font-weight:700}
-.seg3 button:nth-of-type(1):hover{color:var(--hot)}
+.seg3[data-i="2"] button:nth-of-type(1){color:var(--gold);font-weight:700}
+.seg3 button:nth-of-type(3):hover{color:var(--hot)}
 .dbtn{height:40px;border-radius:12px;background:var(--accent);color:#fff;font-size:13px;font-weight:600;box-shadow:none;transition:transform .3s var(--spring),filter .2s}
 .dbtn::after{display:none}
 @media (hover:hover){.dbtn:hover{filter:brightness(1.08);box-shadow:none}.dbtn:hover svg{transform:translateX(3px)}}
@@ -559,9 +559,9 @@ function clsHTML(c){
   const i=c.status==="pinned"?2:c.status==="kept"?1:-1;
   return `<div class="seg3" data-i="${i}" role="group" aria-label="분류">
     <span class="thumb" aria-hidden="true"></span>
-    <button data-act="toss" data-id="${c._id}">${I.toss}<span>버리기</span></button>
-    <button data-act="${kept(c)?"unset":"keep"}" data-id="${c._id}" aria-pressed="${kept(c)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg><span>일반</span></button>
     <button data-act="${pinned(c)?"unset":"pin"}" data-id="${c._id}" aria-pressed="${pinned(c)}">${pinned(c)?I.star:I.starO}<span>주목</span></button>
+    <button data-act="${kept(c)?"unset":"keep"}" data-id="${c._id}" aria-pressed="${kept(c)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg><span>일반</span></button>
+    <button data-act="toss" data-id="${c._id}">${I.toss}<span>버리기</span></button>
   </div>`;
 }
 function ringHTML(c){
@@ -631,9 +631,9 @@ function detailHTML(c){
     <div class="links">${links.join("")}</div>
     ${(pinned(c)||kept(c))?`<textarea class="memo" data-note="${c._id}" placeholder="메모: 참여 여부, 담당, 준비할 것 (엑셀에 같이 저장돼요)">${esc(c.note||"")}</textarea>`:""}
     <div class="row">
-      <button class="pbtn left" data-act="toss" data-id="${c._id}">버리기</button>
-      <button class="pbtn" data-act="${kept(c)?"unset":"keep"}" data-id="${c._id}">${kept(c)?"일반 해제":"일반"}</button>
       <button class="pbtn" data-act="${pinned(c)?"unset":"pin"}" data-id="${c._id}">${pinned(c)?"주목 해제":"주목"}</button>
+      <button class="pbtn" data-act="${kept(c)?"unset":"keep"}" data-id="${c._id}">${kept(c)?"일반 해제":"일반"}</button>
+      <button class="pbtn left" data-act="toss" data-id="${c._id}">버리기</button>
     </div>`;
 }
 
