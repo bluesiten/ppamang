@@ -515,6 +515,8 @@ header{background:color-mix(in srgb,var(--bg) 55%,transparent)}
   :root:not([data-theme="light"]) .team::after{background:linear-gradient(90deg,#64b5ff,#c79bff,#ffd36b)}
   :root:not([data-theme="light"]) .bsep{background:rgba(255,255,255,.18)}}
 @media (prefers-reduced-motion: reduce){.team{clip-path:none!important}.team::after{transform:none!important}}
+.posted{margin:-10px 0 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.posted::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.5}
 </style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -533,7 +535,7 @@ header{background:color-mix(in srgb,var(--bg) 55%,transparent)}
   <div class="tools">
     <div class="chips" id="chips" role="group" aria-label="거르기"></div>
     <div class="right">
-      <select class="select" id="sort" aria-label="정렬"><option value="due">마감 임박순</option><option value="budget">예산 큰 순</option><option value="new">최근 수집순</option></select>
+      <select class="select" id="sort" aria-label="정렬"><option value="due">마감 임박순</option><option value="budget">예산 큰 순</option><option value="new">최근 게시순</option></select>
       <div class="seg" role="group" aria-label="보기 방식">
         <button data-view="grid" aria-pressed="true" title="카드로 보기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button>
         <button data-view="table" aria-pressed="false" title="표로 보기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
@@ -610,6 +612,7 @@ function clsHTML(c){
     <button data-act="toss" data-id="${c._id}">${I.toss}<span>버리기</span></button>
   </div>`;
 }
+const pdate=c=>{ const p=String(c.postedAt||"").split("-"); return p.length===3?`${+p[1]}월 ${+p[2]}일`:""; };
 function ringHTML(c){
   const d=dday(c.due), p=d==null||d<0?0:Math.max(.04,Math.min(1,1-d/30)), C=2*Math.PI*17;
   const lab=d==null?"미정":d<0?"마감":d===0?"오늘":"D-"+d;
@@ -621,7 +624,7 @@ function cardHTML(c,i){
     <div class="ctop">${pinned(c)?`<span class="tag star">${I.star}주목</span>`:kept(c)?`<span class="tag kept">일반</span>`:""}<span class="tag">${esc(c.stage||"공고")}</span>${isPublic(c)?`<span class="tag pub">공공</span>`:""}</div>
     ${ringHTML(c)}
     <div class="org ${knownOrg(c)?"":"na"}">${esc(knownOrg(c)?c.org:"발주처 확인 중")}</div>
-    <p class="title">${esc(c.title)}</p>
+    <p class="title">${esc(c.title)}</p>${c.postedAt?`<p class="posted">${esc(c.stage||"공고")} · ${pdate(c)} 게시</p>`:""}
     <div class="figs">
       <div><span>예산</span><b class="${b?"num":"na"}">${b||"미공개"}</b></div>
       <div><span>마감</span><b class="${due?"num":"na"}">${due||"확인 필요"}</b></div>
@@ -672,7 +675,7 @@ function detailHTML(c){
       <dt>마감</dt><dd class="num">${due||"확인 필요"}${d!=null&&d>=0?` · D-${d}`:""}</dd>
       ${c.summary?`<dt>과업</dt><dd>${esc(c.summary)}</dd>`:""}
       ${c.dueNote?`<dt>일정</dt><dd>${esc(c.dueNote)}</dd>`:""}
-      <dt>출처</dt><dd>${esc(c.src||"")}${c.foundAt?` · ${esc(c.foundAt.slice(5).replace("-","."))} 수집`:""}</dd>
+      ${c.postedAt?`<dt>게시</dt><dd class="num">${esc(c.stage||"공고")} ${pdate(c)} 게시</dd>`:""}<dt>출처</dt><dd>${esc(c.src||"")}</dd>
     </dl>
     <div class="links">${links.join("")}</div>
     ${(pinned(c)||kept(c))?`<textarea class="memo" data-note="${c._id}" placeholder="메모: 참여 여부, 담당, 준비할 것 (엑셀에 같이 저장돼요)">${esc(c.note||"")}</textarea>`:""}
@@ -688,7 +691,7 @@ const inTab=c=>(c.status||"new")===state.tab;
 const SORTS={
   due:(a,b)=>{const k=c=>{const d=dday(c.due);return d==null?5e3:d<0?9e3-d:d;}; return k(a)-k(b);},
   budget:(a,b)=>(b.budget||0)-(a.budget||0),
-  new:(a,b)=>(b.foundAt||"").localeCompare(a.foundAt||"")
+  new:(a,b)=>(b.postedAt||b.foundAt||"").localeCompare(a.postedAt||a.foundAt||"")
 };
 
 function render(){
@@ -779,7 +782,7 @@ function exportXlsx(){
   if(!rows.length){ toast("주목·일반으로 분류한 공고가 아직 없어요."); return; }
   if(!window.XLSX){ toast("엑셀 도구를 불러오지 못했어요. 새로 고쳐 주세요."); return; }
   const data=rows.map(c=>({"분류":ST[c.status],"발주처":knownOrg(c)?c.org:"","사업명":c.title,"구분":isPublic(c)?"공공":"민간","단계":c.stage||"","분야":(c.fields||[]).join(", "),
-    "예산(원)":c.budget||"","마감":c.due||"","공고번호":c.bidNo||"","과업":c.summary||"","메모":c.note||"","원문":c.url||"","출처":c.src||"","수집일":c.foundAt||"","분류일":(c.triagedAt||"").slice(0,10)}));
+    "예산(원)":c.budget||"","마감":c.due||"","공고번호":c.bidNo||"","과업":c.summary||"","메모":c.note||"","원문":c.url||"","출처":c.src||"","게시일":c.postedAt||"","분류일":(c.triagedAt||"").slice(0,10)}));
   const ws=XLSX.utils.json_to_sheet(data);
   ws["!cols"]=[6,18,44,6,8,18,14,16,16,40,30,40,16,11,11].map(w=>({wch:w}));
   rows.forEach((c,i)=>{ const cell=ws[XLSX.utils.encode_cell({r:i+1,c:6})]; if(cell&&typeof cell.v==="number") cell.z="#,##0"; });
